@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { login, reset } from '../../features/auth/authSlice';
+// Вот исправленная строка:
+import { login, reset, setUser } from '../features/auth/authSlice'; 
 
 // MUI Components
 import { Button, TextField, Typography, Container, Box, CircularProgress, Alert } from '@mui/material';
@@ -101,4 +102,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage; 
+export default LoginPage;

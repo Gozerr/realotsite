@@ -1,4 +1,5 @@
 from fastapi import Depends, FastAPI, HTTPException, status, Query, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
@@ -19,6 +20,23 @@ UPLOADS_DIR = "uploads"
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="RealtyPro API")
+
+# --- CORS Middleware ---
+# Это разрешит вашему frontend-приложению (с localhost:3000)
+# делать запросы к backend-серверу.
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"], # Разрешаем все методы (GET, POST, и т.д.)
+    allow_headers=["*"], # Разрешаем все заголовки
+)
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # --- Dependencies ---
