@@ -1,5 +1,5 @@
 from sqlalchemy import (
-    Boolean, Column, DateTime, ForeignKey, Integer, String, Enum as SqlEnum
+    Boolean, Column, DateTime, ForeignKey, Integer, String, Enum as SqlEnum, Float
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -54,6 +54,8 @@ class Property(Base):
     description = Column(String)
     price = Column(Integer)
     address = Column(String)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
     status = Column(SqlEnum(PropertyStatusEnum), default=PropertyStatusEnum.for_sale)
     agency_id = Column(Integer, ForeignKey("agencies.id"))
     realtor_id = Column(Integer, ForeignKey("realtors.id"))

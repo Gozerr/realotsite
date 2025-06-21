@@ -67,6 +67,8 @@ class PropertyBase(BaseModel):
     description: str | None = None
     price: int
     address: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     status: PropertyStatusEnum = PropertyStatusEnum.for_sale
 
 
@@ -79,6 +81,8 @@ class PropertyUpdate(BaseModel):
     description: str | None = None
     price: int | None = None
     address: str | None = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     status: PropertyStatusEnum | None = None
 
 
