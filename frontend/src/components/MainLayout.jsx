@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Drawer, AppBar, Toolbar, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, CssBaseline } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Drawer, AppBar, Toolbar, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, CssBaseline, IconButton, Menu, MenuItem, Badge } from '@mui/material';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout, reset } from '../features/auth/authSlice';
@@ -11,6 +11,8 @@ import PeopleIcon from '@mui/icons-material/People';
 import EventIcon from '@mui/icons-material/Event';
 import SchoolIcon from '@mui/icons-material/School';
 import LogoutIcon from '@mui/icons-material/Logout';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 const drawerWidth = 240;
 
@@ -25,6 +27,24 @@ const menuItems = [
 function MainLayout() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
+
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleNotificationMenuOpen = (event) => {
+    setNotificationAnchorEl(event.currentTarget);
+  };
+
+  const handleNotificationMenuClose = () => {
+    setNotificationAnchorEl(null);
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -59,11 +79,68 @@ function MainLayout() {
       <CssBaseline />
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             РиэлтиПро
           </Typography>
+
+          {/* Иконка уведомлений */}
+          <IconButton
+            size="large"
+            aria-label="show 17 new notifications"
+            color="inherit"
+            onClick={handleNotificationMenuOpen}
+          >
+            <Badge badgeContent={17} color="error">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+          
+          {/* Иконка профиля */}
+          <IconButton
+            size="large"
+            edge="end"
+            aria-label="account of current user"
+            aria-haspopup="true"
+            onClick={handleProfileMenuOpen}
+            color="inherit"
+          >
+            <AccountCircle />
+          </IconButton>
         </Toolbar>
       </AppBar>
+
+      {/* Меню профиля */}
+      <Menu
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+        sx={{mt: '45px'}}
+      >
+        <MenuItem onClick={() => { handleMenuClose(); navigate('/profile'); }}>Мой профиль</MenuItem>
+        <MenuItem onClick={handleMenuClose}>Настройки</MenuItem>
+        <MenuItem onClick={handleLogout}>Выйти</MenuItem>
+      </Menu>
+
+      {/* Меню уведомлений */}
+       <Menu
+        anchorEl={notificationAnchorEl}
+        open={Boolean(notificationAnchorEl)}
+        onClose={handleNotificationMenuClose}
+        sx={{mt: '45px'}}
+      >
+        <MenuItem onClick={handleNotificationMenuClose}>Уведомление 1</MenuItem>
+        <MenuItem onClick={handleNotificationMenuClose}>Уведомление 2</MenuItem>
+      </Menu>
+
       <Drawer
         variant="permanent"
         sx={{

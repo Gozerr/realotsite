@@ -28,6 +28,25 @@ export const login = createAsyncThunk('auth/login', async (userData, thunkAPI) =
   }
 });
 
+export const getStats = createAsyncThunk('auth/getStats', async (_, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.user.access_token;
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const response = await axios.get(`${API_URL}/stats/me`, config);
+    return response.data;
+  } catch (error) {
+     const message =
+      (error.response && error.response.data && error.response.data.detail) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
 export const logout = createAsyncThunk('auth/logout', async () => {
   localStorage.removeItem('user');
 });
@@ -38,6 +57,8 @@ const initialState = {
   isSuccess: false,
   isLoading: false,
   message: '',
+  stats: null,
+  isStatsLoading: false,
 };
 
 export const authSlice = createSlice({
@@ -49,6 +70,8 @@ export const authSlice = createSlice({
       state.isSuccess = false;
       state.isError = false;
       state.message = '';
+      state.stats = null;
+      state.isStatsLoading = false;
     },
   },
   extraReducers: (builder) => {
@@ -69,6 +92,18 @@ export const authSlice = createSlice({
       })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
+        state.stats = null;
+      })
+      .addCase(getStats.pending, (state) => {
+        state.isStatsLoading = true;
+      })
+      .addCase(getStats.fulfilled, (state, action) => {
+        state.isStatsLoading = false;
+        state.stats = action.payload;
+      })
+      .addCase(getStats.rejected, (state, action) => {
+        state.isStatsLoading = false;
+        console.error("Failed to load stats:", action.payload);
       });
   },
 });
